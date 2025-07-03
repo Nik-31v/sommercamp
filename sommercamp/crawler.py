@@ -10,7 +10,7 @@ class SchoolSpider(Spider):
     # der beschreibt, was du crawlst.
     name = "school"
 
-    start_urls = ["https://www.chefkoch.de/rs/s" + str(i)+ "r4.5/apfel/Rezepte.html"  for i in range(20)]
+    start_urls = ["https://www.chefkoch.de/rs/s" + str(i) + "r4.5/apfel/Rezepte.html" for i in range(20)]
     link_extractor = LxmlLinkExtractor(
         # Beschränke den Crawler, nur Links zu verfolgen,
         # die auf eine der gelisteten Domains verweisen.

@@ -10,8 +10,7 @@ with open ("data/documents.jsonl") as f:
 
 def get_llm_response(request, llm):
     from openai import OpenAI as cli
-    messages = []
-    messages.append({"role": "user", "content": request})
+    messages = [{"role": "user", "content": request}]
 
     output = cli().chat.completions.create(model=llm, messages=messages)
 
@@ -24,8 +23,20 @@ def build_llm_request(title):
             "Das gericht ist: \"" + title + "\"\n\n" + \
             "Antworte in json mit zwei Feldern, Begründung (200 Zeichen) und Bewertung."
 
-with open("data/apple-scores.jsonl", "w") as f:
+already_requested = set()
+with open("data/apple-scores.jsonl", "r") as f:
+    for l in f:
+        try:
+            l = json.loads(l)
+            already_requested.add(l["docno"])
+        except: pass
+
+
+with open("data/apple-scores.jsonl", "a") as f:
     for doc, title in tqdm(doc_to_title.items()):
+        if doc in already_requested:
+            continue
         llm_request = build_llm_request(title)
         llm_response = get_llm_response(llm_request, "o4-mini")
         f.write(json.dumps({"docno": doc, "title": title, "llm_request": llm_request, "llm_response": llm_response})+ "\n")
+        f.flush()
