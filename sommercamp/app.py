@@ -98,7 +98,7 @@ def app(index_dir) -> None:
         with container(border=True):
             # Zeige den Titel der gefundenen Webseite an.
             subheader(row["title"])
-            badge("Apfelgehalt: " + str(row["Apfelgehalt"]), color="orange")
+            badge("Apfelgehalt: " + str(row["Apfelgehalt"]), color="green")
             # Speichere den Text in einer Variablen (text).
             text = row["text"]
             # Schneide den Text nach 500 Zeichen ab.
