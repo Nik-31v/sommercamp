@@ -1,7 +1,7 @@
 # Hier importieren wir die benötigten Softwarebibliotheken.
 from os.path import abspath, exists
 from sys import argv
-from streamlit import (text_input, header, title, subheader, 
+from streamlit import (text_input, header, title, subheader,
     container, markdown, link_button, divider, set_page_config, slider, badge)
 from pyterrier import started, init
 # Die PyTerrier-Bibliothek muss zuerst gestartet werden,
@@ -14,15 +14,39 @@ from pyterrier.text import get_text
 import json
 
 
-apple_scores = {}
+apple_scores = {}  # Leeres Dictionary zum Speichern der Bewertungen
 
+# Öffne die Datei mit den Bewertungen (JSONL = JSON pro Zeile)
 with open("data/apple-scores.jsonl", "r") as f:
-    for l in f:
+    for line_num, line in enumerate(f, start=1):  # Zähle mit, in welcher Zeile wir sind
+        try:
+            l = json.loads(line)  # Lade die aktuelle Zeile als JSON-Daten
+            
+            # Versuche, den content-String aus dem "llm_response"-Feld zu bekommen
+            content = l.get("llm_response", {}).get("content", "")
+            
+            if content:
+                # Wenn content nicht leer ist, versuche ihn als JSON zu interpretieren
+                parsed = json.loads(content)
+                
+                # Hole den Wert für "Bewertung" aus dem JSON-Objekt
+                bewertung = parsed.get("Bewertung")
+                
+                if bewertung is not None:
+                    # Speichere die Bewertung als Ganzzahl in apple_scores
+                    apple_scores[l["docno"]] = int(bewertung)
+                else:
+                    # Hinweis, wenn "Bewertung" fehlt
+                    print(f"[Zeile {line_num}] No element 'Bewertung' in content: {content}")
+            else:
+                # Hinweis, wenn "content" leer oder fehlt
+                print(f"[Zeile {line_num}] Empty or missing 'content'")
         
-            l = json.loads(l)
-            apple_scores[l["docno"]] = int(json.loads(l["llm_response"]["content"])["Bewertung"])
-        
-        
+        except Exception as e:
+            # Fange alle Fehler ab (z. B. JSONDecodeError, KeyError, TypeError, etc.)
+            print(f"[Zeile {line_num}] Error while processing: {e}")
+
+
 # Diese Funktion baut die App für die Suche im gegebenen Index auf.
 def app(index_dir) -> None:
 
@@ -37,7 +61,7 @@ def app(index_dir) -> None:
     markdown("Hier kannst du unsere neue Schul-Suchmaschine nutzen:")
     divider()
 
-    # Erstelle ein Text-Feld, mit dem die Suchanfrage (query) 
+    # Erstelle ein Text-Feld, mit dem die Suchanfrage (query)
     # eingegeben werden kann.
     query = text_input(
         label="Suchanfrage",
@@ -56,7 +80,7 @@ def app(index_dir) -> None:
 
     # Öffne den Index.
     index = IndexFactory.of(abspath(index_dir))
-    # Initialisiere den Such-Algorithmus. 
+    # Initialisiere den Such-Algorithmus.
     searcher = BatchRetrieve(
         index,
         wmodel="BM25",
@@ -77,7 +101,7 @@ def app(index_dir) -> None:
     if len(results) == 0:
         markdown("Keine Suchergebnisse.")
         return
-    
+
     results_filtered = []
     # Gib nun der Reihe nach, alle Suchergebnisse aus.
     for _, row in results.iterrows():
