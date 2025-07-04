@@ -1,3 +1,7 @@
+"""
+To use the editor, just run the followig script.
+Code by Niklas Maroldt
+"""
 import json
 import re
 
@@ -7,13 +11,10 @@ output_file_path = "data/documents_edited.jsonl"
 with open(input_file_path, "r") as input_file, open(output_file_path, "w") as output_file:
     for line in input_file:
         line_data = json.loads(line)
-        text = line_data.get("text")
-        text = (text[text.find("Gesamtzeit"):text.find("Rezept von")])
+        text_input = line_data.get("text")
+        text = (text_input[text_input.find("Gesamtzeit"):text_input.find("Rezept von")])
 
-        # saetze = re.findall(r'.*?\. ?', text)
-        
         saetze = re.split(r'(?<=[.!?]) +', text)
-        print(saetze)
         char_amount = sum(len(satz) for satz in saetze)
 
         while char_amount > 500:

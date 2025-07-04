@@ -1,3 +1,8 @@
+"""
+To use the Indexer, please run json_documents_editor.py first and then use the following startup script:
+python sommercamp/indexer.py data/documents_edited.jsonl data/index/
+"""
+
 # Hier importieren wir die benötigten Softwarebibliotheken.
 from os.path import exists, abspath
 from json import loads
