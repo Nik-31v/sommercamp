@@ -52,20 +52,20 @@ def app(index_dir) -> None:
 
     # Konfiguriere den Titel der Web-App (wird im Browser-Tab angezeigt)
     set_page_config(
-        page_title="Schul-Suchmaschine",
+        page_title="Apple-Search",
         layout="centered",
     )
 
     # Gib der App einen Titel und eine Kurzbeschreibung:
-    title("Schul-Suchmaschine")
-    markdown("Hier kannst du unsere neue Schul-Suchmaschine nutzen:")
+    title("Apple-Search")
+    markdown("Die Suchmaschiene mit über 800 verschiedenen Apfel-Rezepten")
     divider()
 
     # Erstelle ein Text-Feld, mit dem die Suchanfrage (query)
     # eingegeben werden kann.
     query = text_input(
         label="Suchanfrage",
-        placeholder="Suche...",
+        placeholder="Suche Rezept...",
         value="",
     )
 
@@ -87,7 +87,7 @@ def app(index_dir) -> None:
         num_results=1000,
     )
     # Initialisiere das Modul, zum Abrufen der Texte.
-    text_getter = get_text(index, metadata=["url", "title", "text"])
+    text_getter = get_text(index, metadata=["url", "title", "text_visible"])
     # Baue die Such-Pipeline zusammen.
     pipeline = searcher >> text_getter
     # Führe die Such-Pipeline aus und suche nach der Suchanfrage.
@@ -124,7 +124,7 @@ def app(index_dir) -> None:
             subheader(row["title"])
             badge("Apfelgehalt: " + str(row["Apfelgehalt"]), color="green")
             # Speichere den Text in einer Variablen (text).
-            text = row["text"]
+            text = row["text_visible"]
             # Schneide den Text nach 500 Zeichen ab.
             text = text[:500]
             # Ersetze Zeilenumbrüche durch Leerzeichen.

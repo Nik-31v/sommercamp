@@ -39,7 +39,7 @@ def index(documents_file, index_dir):
             "docno": 100,
             "url": 1000,
             "title": 1000,
-            "text": 100_000,
+            "text_visible": 100_000,
         },
     )
     # Starte das Indizieren.
