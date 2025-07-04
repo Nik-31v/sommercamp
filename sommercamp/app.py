@@ -59,17 +59,16 @@ def app(index_dir) -> None:
     # Gib der App einen Titel und eine Kurzbeschreibung:
     title("Apple-Search")
     markdown("Die Suchmaschiene mit über 800 verschiedenen Apfel-Rezepten")
-    divider()
 
     # Erstelle ein Text-Feld, mit dem die Suchanfrage (query)
     # eingegeben werden kann.
     query = text_input(
-        label="Suchanfrage",
+        label="",
         placeholder="Suche Rezept...",
         value="",
     )
 
-    apple_score = slider("Apfelgehalt", 0, 10, 8)
+    apple_score = slider("", 0, 10, 8)
     markdown("Apfelgehalt: " + str(apple_score))
 
 
@@ -93,13 +92,13 @@ def app(index_dir) -> None:
     # Führe die Such-Pipeline aus und suche nach der Suchanfrage.
     results = pipeline.search(query)
 
+
     # Zeige eine Unter-Überschrift vor den Suchergebnissen an.
-    divider()
     header("Suchergebnisse")
 
     # Wenn die Ergebnisliste leer ist, gib einen Hinweis aus.
     if len(results) == 0:
-        markdown("Keine Suchergebnisse.")
+        markdown("Keine Rezepte gefunden.")
         return
 
     results_filtered = []
@@ -122,7 +121,7 @@ def app(index_dir) -> None:
         with container(border=True):
             # Zeige den Titel der gefundenen Webseite an.
             subheader(row["title"])
-            badge("Apfelgehalt: " + str(row["Apfelgehalt"]), color="green")
+            badge("Apfelgehalt: " + str(row["Apfelgehalt"]), color="red")
             # Speichere den Text in einer Variablen (text).
             text = row["text_visible"]
             # Schneide den Text nach 500 Zeichen ab.
